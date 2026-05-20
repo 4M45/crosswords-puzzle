@@ -1,0 +1,1923 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full bg-cream-50">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CrossWords Puzzle - Free Printable Crossword Generator</title>
+  <meta name="description" content="Generate printable crossword puzzles in high-quality PDF format. Supported by local dictionaries and Gemini AI.">
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- jsPDF CDN -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  
+  <!-- Google Font Nunito -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,300;0,400;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
+  
+  <!-- Tailwind Theme Configuration -->
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Nunito', 'sans-serif'],
+          },
+          colors: {
+            cream: {
+              50: '#fffdf9',
+              100: '#fffcf5',
+              200: '#fff8e7',
+              300: '#fff0d1',
+              400: '#ffe0ad',
+              500: '#ffd085',
+              600: '#e6b56c',
+            },
+            coral: {
+              50: '#fff5f2',
+              100: '#ffebee',
+              500: '#ff8a65',
+              600: '#ff7043',
+              700: '#e65100',
+            },
+            tealTheme: {
+              50: '#e0f2f1',
+              100: '#b2dfdb',
+              200: '#80cbc4',
+              500: '#009688',
+              600: '#00897b',
+              700: '#00796b',
+            }
+          },
+          borderRadius: {
+            '3xl': '1.5rem',
+            '4xl': '2rem',
+          }
+        }
+      }
+    }
+  </script>
+  
+  <!-- Custom Styles and Animations -->
+  <style>
+    body {
+      background-color: #fffcf5;
+      font-family: 'Nunito', sans-serif;
+    }
+    
+    /* Bubbly Blob Animations */
+    @keyframes float-blob-1 {
+      0% { transform: translate(0px, 0px) scale(1); }
+      33% { transform: translate(30px, -50px) scale(1.05); }
+      66% { transform: translate(-20px, 20px) scale(0.95); }
+      100% { transform: translate(0px, 0px) scale(1); }
+    }
+    @keyframes float-blob-2 {
+      0% { transform: translate(0px, 0px) scale(1); }
+      33% { transform: translate(-40px, 30px) scale(0.95); }
+      66% { transform: translate(30px, -20px) scale(1.05); }
+      100% { transform: translate(0px, 0px) scale(1); }
+    }
+    @keyframes float-blob-3 {
+      0% { transform: translate(0px, 0px) scale(1); }
+      33% { transform: translate(25px, 25px) scale(1.03); }
+      66% { transform: translate(-30px, -15px) scale(0.97); }
+      100% { transform: translate(0px, 0px) scale(1); }
+    }
+    .animate-float-blob-1 {
+      animation: float-blob-1 15s infinite ease-in-out;
+    }
+    .animate-float-blob-2 {
+      animation: float-blob-2 18s infinite ease-in-out;
+    }
+    .animate-float-blob-3 {
+      animation: float-blob-3 20s infinite ease-in-out;
+    }
+
+    /* Custom scrollbar for clues */
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 6px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-track {
+      background: #fdfaf4;
+      border-radius: 10px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: #ffd085;
+      border-radius: 10px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+      background: #e6b56c;
+    }
+  </style>
+</head>
+<body class="min-h-full flex flex-col relative overflow-x-hidden">
+
+  <!-- Playful animated background blobs -->
+  <div class="absolute inset-0 overflow-hidden pointer-events-none z-0">
+    <div class="absolute top-10 left-10 w-72 h-72 bg-coral-100/40 rounded-full blur-3xl animate-float-blob-1"></div>
+    <div class="absolute bottom-20 right-10 w-96 h-96 bg-tealTheme-50/50 rounded-full blur-3xl animate-float-blob-2"></div>
+    <div class="absolute top-1/2 left-1/3 w-80 h-80 bg-cream-300/30 rounded-full blur-3xl animate-float-blob-3"></div>
+  </div>
+
+  <!-- Toast Container -->
+  <div id="toastContainer" class="fixed bottom-5 right-5 z-50 flex flex-col gap-2 pointer-events-none"></div>
+
+  <!-- Header -->
+  <header class="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex justify-between items-center z-10 relative">
+    <div class="flex items-center space-x-3">
+      <div class="bg-coral-500 text-white p-2.5 rounded-2xl shadow-md transform -rotate-3 flex items-center justify-center">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+        </svg>
+      </div>
+      <div>
+        <h1 class="text-2xl font-extrabold text-slate-800 tracking-tight">CrossWords Puzzle</h1>
+        <p class="text-xs text-slate-500 font-semibold">Generate printable crosswords instantly</p>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <main class="flex-grow w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 z-10 relative grid grid-cols-1 lg:grid-cols-12 gap-8 mb-12">
+    
+    <!-- Sidebar: Configuration Panel -->
+    <div class="lg:col-span-4 flex flex-col space-y-6">
+      <div class="bg-white rounded-3xl p-6 shadow-md border border-slate-100 flex flex-col space-y-6">
+        <h2 class="text-lg font-bold text-slate-800 border-b border-slate-100 pb-3">Puzzle Settings</h2>
+        
+        <form id="configForm" onsubmit="handleGenerateSubmit(event)" class="space-y-5">
+          <!-- Language Select -->
+          <div class="flex flex-col space-y-1.5">
+            <label for="languageSelect" class="text-xs font-bold text-slate-500 uppercase tracking-wider">Language</label>
+            <select id="languageSelect" onchange="handleLanguageChange()" class="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-2.5 text-slate-700 font-bold text-sm focus:outline-none focus:ring-2 focus:ring-coral-500">
+              <option value="English">English</option>
+              <option value="Spanish">Español</option>
+              <option value="French">Français</option>
+              <option value="German">Deutsch</option>
+            </select>
+          </div>
+
+          <!-- Difficulty Radio Buttons -->
+          <div class="flex flex-col space-y-1.5">
+            <span class="text-xs font-bold text-slate-500 uppercase tracking-wider">Difficulty</span>
+            <div class="grid grid-cols-4 gap-2">
+              <label class="cursor-pointer select-none">
+                <input type="radio" name="difficulty" value="Easy" checked class="sr-only peer">
+                <div class="peer-checked:bg-emerald-500 peer-checked:text-white border border-slate-200 rounded-xl py-2 text-center text-xs font-bold text-slate-600 hover:bg-slate-50 transition-all">
+                  Easy
+                </div>
+              </label>
+              <label class="cursor-pointer select-none">
+                <input type="radio" name="difficulty" value="Medium" class="sr-only peer">
+                <div class="peer-checked:bg-amber-500 peer-checked:text-white border border-slate-200 rounded-xl py-2 text-center text-xs font-bold text-slate-600 hover:bg-slate-50 transition-all">
+                  Medium
+                </div>
+              </label>
+              <label class="cursor-pointer select-none">
+                <input type="radio" name="difficulty" value="Hard" class="sr-only peer">
+                <div class="peer-checked:bg-rose-500 peer-checked:text-white border border-slate-200 rounded-xl py-2 text-center text-xs font-bold text-slate-600 hover:bg-slate-50 transition-all">
+                  Hard
+                </div>
+              </label>
+              <label class="cursor-pointer select-none">
+                <input type="radio" name="difficulty" value="Expert" class="sr-only peer">
+                <div class="peer-checked:bg-purple-500 peer-checked:text-white border border-slate-200 rounded-xl py-2 text-center text-xs font-bold text-slate-600 hover:bg-slate-50 transition-all">
+                  Expert
+                </div>
+              </label>
+            </div>
+          </div>
+
+          <!-- Theme Selection -->
+          <div class="flex flex-col space-y-1.5">
+            <label for="themeSelect" class="text-xs font-bold text-slate-500 uppercase tracking-wider">Theme</label>
+            <select id="themeSelect" onchange="handleThemeChange()" class="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-2.5 text-slate-700 font-bold text-sm focus:outline-none focus:ring-2 focus:ring-coral-500">
+              <option value="Animals">Animals & Nature</option>
+              <option value="History">History & Origins</option>
+              <option value="Science">Science & Discoveries</option>
+              <option value="Sports">Sports & Pop Culture</option>
+              <option value="Custom">Custom Words List</option>
+              <option value="AI_Magic">AI Magic (Gemini API)</option>
+            </select>
+          </div>
+
+          <!-- Custom Theme Words Area -->
+          <div id="customThemePanel" class="hidden flex flex-col space-y-2 border-t border-slate-100 pt-3">
+            <div class="flex justify-between items-center">
+              <label for="customWordsInput" class="text-xs font-bold text-slate-500 uppercase tracking-wider">Custom Words & Clues</label>
+              <span class="text-[10px] text-slate-400 font-bold">Format: WORD:Clue</span>
+            </div>
+            <textarea id="customWordsInput" rows="5" placeholder="LION:King of the jungle&#10;TIGER:Large striped wild cat&#10;ZEBRA:Black and white striped animal" class="w-full bg-slate-50 border border-slate-200 rounded-2xl px-3 py-2 text-slate-700 text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-coral-500"></textarea>
+            <button type="button" id="clueHelperBtn" onclick="autoGenerateMissingClues()" class="w-full bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold py-2 rounded-xl text-xs flex items-center justify-center space-x-1.5 transition-all">
+              <span>🪄 Auto-Generate Missing Clues</span>
+            </button>
+          </div>
+
+          <!-- AI Magic Panel -->
+          <div id="aiMagicPanel" class="hidden flex flex-col space-y-2 border-t border-slate-100 pt-3">
+            <label for="aiTopicInput" class="text-xs font-bold text-slate-500 uppercase tracking-wider">AI Topic / Theme</label>
+            <input type="text" id="aiTopicInput" placeholder="e.g., Space Exploration, Ocean Depths" class="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-2.5 text-slate-700 font-semibold text-xs focus:outline-none focus:ring-2 focus:ring-coral-500">
+            <button type="button" id="aiGenerateBtn" onclick="generateWordsWithAI()" class="w-full bg-tealTheme-500 hover:bg-tealTheme-600 text-white font-bold py-2 rounded-xl text-xs flex items-center justify-center space-x-1.5 transition-all">
+              <span>Generate Words with AI</span>
+            </button>
+          </div>
+
+          <!-- Advanced Settings Panel -->
+          <div class="border-t border-slate-100 pt-3">
+            <button type="button" onclick="toggleAdvancedSettings()" class="text-xs font-bold text-slate-500 flex items-center space-x-1.5 hover:text-slate-700 focus:outline-none">
+              <span id="advancedIcon">🔽</span>
+              <span>Advanced Settings</span>
+            </button>
+            <div id="advancedPanel" class="flex flex-col space-y-3 mt-3">
+              <!-- Grid Size -->
+              <div class="flex flex-col space-y-1">
+                <label for="gridSizeRange" class="text-[10px] font-bold text-slate-400 uppercase flex justify-between">
+                  <span>Grid Size</span>
+                  <span id="gridSizeVal" class="text-coral-500 font-extrabold">20x20</span>
+                </label>
+                <input type="range" id="gridSizeRange" min="15" max="30" value="20" oninput="updateRangeVal('gridSizeRange', 'gridSizeVal', this.value + 'x' + this.value)" class="w-full h-1 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-coral-500">
+              </div>
+              <!-- Word Count -->
+              <div class="flex flex-col space-y-1">
+                <label for="wordCountRange" class="text-[10px] font-bold text-slate-400 uppercase flex justify-between">
+                  <span>Target Words</span>
+                  <span id="wordCountVal" class="text-coral-500 font-extrabold">15</span>
+                </label>
+                <input type="range" id="wordCountRange" min="5" max="40" value="15" oninput="updateRangeVal('wordCountRange', 'wordCountVal', this.value)" class="w-full h-1 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-coral-500">
+              </div>
+            </div>
+          </div>
+
+          <button type="submit" id="generatePuzzleBtn" class="w-full bg-coral-500 hover:bg-coral-600 text-white font-bold py-3.5 rounded-2xl shadow-md hover:shadow-lg transition-all uppercase text-xs tracking-wider">
+            Generate Puzzle
+          </button>
+          
+          <button type="button" id="hiddenFormSubmit" class="hidden"></button>
+        </form>
+        </div>
+      </div>
+
+      <!-- Right Column: Interactive Preview & Empty State -->
+      <div class="lg:col-span-8 flex flex-col space-y-6">
+        
+        <!-- Empty State Card -->
+        <div id="emptyStateCard" class="bg-white rounded-3xl p-8 border border-slate-100 shadow-md flex flex-col items-center justify-center text-center space-y-4 min-h-[400px]">
+          <div class="bg-cream-100 text-coral-500 p-4 rounded-3xl">
+            <svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+            </svg>
+          </div>
+          <div>
+            <h3 class="text-base font-bold text-slate-800">Your Crossword Preview</h3>
+            <p class="text-xs text-slate-500 font-semibold max-w-sm mt-1">Configure your settings on the left and click "Generate Puzzle" to construct and view your interactive grid.</p>
+          </div>
+        </div>
+
+        <!-- Live Preview Card (Initially Hidden) -->
+        <div id="livePreviewCard" class="hidden bg-white rounded-3xl p-6 shadow-md border border-slate-100 flex flex-col space-y-6">
+          
+          <!-- Header Actions -->
+          <div class="flex flex-wrap justify-between items-center gap-4 border-b border-slate-100 pb-4">
+            <div>
+              <h3 class="text-lg font-bold text-slate-800">Live Puzzle Preview</h3>
+              <p id="puzzleMetadataText" class="text-xs text-slate-500 font-semibold mt-0.5"></p>
+            </div>
+            <div class="flex items-center space-x-2">
+              <!-- Toggle Answers -->
+              <button onclick="toggleAnswerPreview()" id="toggleAnswersBtn" class="flex items-center space-x-1.5 bg-slate-50 hover:bg-slate-100 border border-slate-200 text-slate-700 font-bold px-4 py-2 rounded-2xl transition-all text-xs focus:outline-none">
+                <span id="toggleAnswersText">Show Solution Preview</span>
+              </button>
+              <!-- Download PDF -->
+              <button onclick="generatePDF()" class="flex items-center space-x-1.5 bg-coral-500 hover:bg-coral-600 text-white font-bold px-4 py-2 rounded-2xl transition-all text-xs shadow-sm focus:outline-none">
+                <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3"></path>
+                </svg>
+                <span>Download PDF</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Canvas Container -->
+          <div class="flex justify-center bg-cream-50/50 border border-slate-100 rounded-3xl p-4 overflow-hidden relative">
+            <canvas id="crosswordCanvas" class="max-w-full cursor-pointer rounded-2xl"></canvas>
+          </div>
+
+          <!-- Clues Container -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6 border-t border-slate-100 pt-6">
+            <!-- Across Column -->
+            <div class="bg-cream-50/30 rounded-2xl p-4 border border-slate-100 flex flex-col space-y-3">
+              <h4 class="text-sm font-bold text-slate-700 flex items-center">
+                <span class="bg-coral-500 text-white w-5 h-5 rounded-lg text-[10px] flex items-center justify-center font-bold mr-2 transform -rotate-3">→</span>
+                ACROSS
+              </h4>
+              <div id="acrossCluesList" class="flex flex-col space-y-2 max-h-[300px] overflow-y-auto pr-2 custom-scrollbar">
+                <!-- Across items loaded here -->
+              </div>
+            </div>
+
+            <!-- Down Column -->
+            <div class="bg-cream-50/30 rounded-2xl p-4 border border-slate-100 flex flex-col space-y-3">
+              <h4 class="text-sm font-bold text-slate-700 flex items-center">
+                <span class="bg-tealTheme-500 text-white w-5 h-5 rounded-lg text-[10px] flex items-center justify-center font-bold mr-2 transform rotate-3">↓</span>
+                DOWN
+              </h4>
+              <div id="downCluesList" class="flex flex-col space-y-2 max-h-[300px] overflow-y-auto pr-2 custom-scrollbar">
+                <!-- Down items loaded here -->
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- Features Section -->
+  <section class="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 border-t border-cream-200/40 mt-8 flex flex-col items-center">
+    <h3 class="text-2xl font-bold text-slate-800 mb-10 text-center tracking-tight">Features</h3>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 w-full max-w-5xl items-stretch mb-10">
+      
+      <!-- Card 1: 100% Free -->
+      <div class="relative bg-white border border-slate-100 rounded-3xl p-6 shadow-sm flex flex-col items-center text-center hover:shadow-md transition-shadow">
+        <div class="w-12 h-12 mb-4 bg-coral-50 text-coral-500 rounded-2xl flex items-center justify-center">
+          <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+        </div>
+
+        <h4 class="text-base font-bold text-slate-800 mb-2">100% Free</h4>
+        <p class="text-xs text-slate-500 font-semibold leading-relaxed">Create unlimited crossword puzzles without spending a single dime. No hidden costs or registration.</p>
+      </div>
+
+      <!-- Card 2: Multiple Languages -->
+      <div class="relative bg-white border border-slate-100 rounded-3xl p-6 shadow-sm flex flex-col items-center text-center hover:shadow-md transition-shadow">
+        <div class="w-12 h-12 mb-4 bg-tealTheme-50 text-tealTheme-600 rounded-2xl flex items-center justify-center">
+          <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 002 2h2a2.5 2.5 0 002.5-2.5V8a2 2 0 00-2-2h-.5A2 2 0 0115 4V3M22 12a10 10 0 11-20 0 10 10 0 0120 0z" />
+          </svg>
+        </div>
+
+        <h4 class="text-base font-bold text-slate-800 mb-2">Multiple Languages</h4>
+        <p class="text-xs text-slate-500 font-semibold leading-relaxed">Crossword grid generation in a wide range of popular languages including English, Spanish, French, and German.</p>
+      </div>
+
+      <!-- Card 3: Printable PDF -->
+      <div class="relative bg-white border border-slate-100 rounded-3xl p-6 shadow-sm flex flex-col items-center text-center hover:shadow-md transition-shadow">
+        <div class="w-12 h-12 mb-4 bg-amber-50 text-amber-600 rounded-2xl flex items-center justify-center">
+          <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+          </svg>
+        </div>
+
+        <h4 class="text-base font-bold text-slate-800 mb-2">Printable PDF</h4>
+        <p class="text-xs text-slate-500 font-semibold leading-relaxed">Instant generation into a high-quality PDF printout, ready to print and solve. Solutions printed cleanly on page 2.</p>
+      </div>
+
+    </div>
+
+    <!-- Centered bottom feature card: Crossword Design -->
+    <div class="w-full max-w-md">
+      <div class="relative bg-cream-100/50 border border-slate-100 rounded-3xl p-5 shadow-sm flex items-center space-x-4">
+        <div class="bg-white p-2.5 rounded-2xl border border-slate-100 text-coral-500 flex-shrink-0 shadow-sm">
+          <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+          </svg>
+        </div>
+        <div>
+          <h4 class="text-sm font-bold text-slate-800 mb-0.5">Crossword Design</h4>
+          <p class="text-xs text-slate-500 font-semibold">Premium, clean letter grid placements with automatic intersection and number detection.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="w-full mt-16 py-8 border-t border-cream-200/50 backdrop-blur-sm bg-white/40 z-10 relative text-center">
+    <div class="max-w-7xl mx-auto px-4 flex flex-col items-center space-y-4">
+      <div class="flex space-x-6 text-sm font-bold text-slate-600">
+        <a href="#" class="hover:text-coral-500 transition-colors">About</a>
+        <a href="#" class="hover:text-coral-500 transition-colors">Contact</a>
+        <a href="#" class="hover:text-coral-500 transition-colors">Privacy Policy</a>
+      </div>
+      
+      <!-- Social icons -->
+      <div class="flex space-x-4 text-xl text-slate-500">
+        <a href="#" class="hover:scale-115 transition-transform hover:text-slate-700">
+          <svg class="w-5 h-5 fill-currentColor" viewBox="0 0 24 24"><path d="M22 12c0-5.52-4.48-10-10-10S2 6.48 2 12c0 4.84 3.44 8.87 8 9.8V15H8v-3h2V9.5C10 7.57 11.57 6 13.5 6H16v3h-2c-.55 0-1 .45-1 1v2h3v3h-3v6.95c4.56-.93 8-4.96 8-9.75z"/></svg>
+        </a>
+        <a href="#" class="hover:scale-115 transition-transform hover:text-slate-700">
+          <svg class="w-5 h-5 fill-currentColor" viewBox="0 0 24 24"><path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"/></svg>
+        </a>
+      </div>
+
+      <p class="text-xs text-slate-400 font-semibold mt-1">
+        &copy; 2026 CrossWords Puzzle. All rights reserved.
+      </p>
+    </div>
+  </footer>
+
+  <!-- Main JavaScript Block -->
+  <script>
+    // --- Global Configuration ---
+    // Inject API key via const apiKey variable as required.
+    const apiKey = "";
+    
+    // --- State Variables ---
+    let currentPuzzle = null;
+    let showAnswers = false;
+    let activeWord = null;
+    let selectedCell = null;
+    let selectedDir = null;
+    let solvedClues = new Set(); // Stores composite key e.g., "across-5" or "down-12"
+
+    // --- Hardcoded Theme Dictionaries (Local fallback & instant generation) ---
+    const dictionaries = {
+      English: {
+        Animals: [
+          { word: "LION", clue: "King of the jungle" },
+          { word: "TIGER", clue: "Large striped wild cat" },
+          { word: "ELEPHANT", clue: "Largest land mammal with a trunk" },
+          { word: "GIRAFFE", clue: "Tallest mammal with a long neck" },
+          { word: "ZEBRA", clue: "Black and white striped animal" },
+          { word: "PENGUIN", clue: "Flightless bird in the Antarctic" },
+          { word: "KANGAROO", clue: "Australian animal that hops" },
+          { word: "DOLPHIN", clue: "Highly intelligent marine mammal" },
+          { word: "CHEETAH", clue: "Fastest land animal" },
+          { word: "PANDA", clue: "Black and white bear from China" },
+          { word: "KOALA", clue: "Tree-dwelling Australian marsupial" },
+          { word: "MONKEY", clue: "Smart primate with a tail" },
+          { word: "GORILLA", clue: "Largest living primate" },
+          { word: "EAGLE", clue: "Majestic bird of prey with sharp vision" },
+          { word: "SHARK", clue: "Apex predator of the ocean" },
+          { word: "OCTOPUS", clue: "Eight-armed sea creature" },
+          { word: "RABBIT", clue: "Long-eared hopping animal" },
+          { word: "TURTLE", clue: "Shelled reptile that moves slowly" },
+          { word: "OWL", clue: "Nocturnal bird of wisdom" },
+          { word: "FOX", clue: "Clever orange-furred canine" }
+        ],
+        Science: [
+          { word: "ATOM", clue: "Basic unit of a chemical element" },
+          { word: "MOLECULE", clue: "Group of atoms bonded together" },
+          { word: "GRAVITY", clue: "Force pulling objects toward Earth" },
+          { word: "ELECTRON", clue: "Negatively charged subatomic particle" },
+          { word: "NEUTRON", clue: "Subatomic particle with no charge" },
+          { word: "PROTON", clue: "Positively charged subatomic particle" },
+          { word: "GENETICS", clue: "Study of heredity and genes" },
+          { word: "BACTERIA", clue: "Single-celled microorganisms" },
+          { word: "VIRUS", clue: "Infectious agent reproducing inside hosts" },
+          { word: "GALAXIE", clue: "Astronomical system of stars and matter" },
+          { word: "TELESCOPE", clue: "Instrument to view distant space" },
+          { word: "MICROSCOPE", clue: "Instrument to view tiny cells" },
+          { word: "PHYSICS", clue: "Study of matter and energy" },
+          { word: "BIOLOGY", clue: "Scientific study of life" },
+          { word: "CHEMISTRY", clue: "Study of substances and reactions" },
+          { word: "ASTRONOMY", clue: "Study of celestial objects" },
+          { word: "GEOLOGY", clue: "Study of rocks and Earth history" },
+          { word: "ENERGY", clue: "Capacity to do work" },
+          { word: "SPECTRUM", clue: "Band of colors seen in rainbows" },
+          { word: "QUANTUM", clue: "Discrete quantity of energy" }
+        ],
+        Geography: [
+          { word: "CONTINENT", clue: "One of Earth's main land masses" },
+          { word: "OCEAN", clue: "Vast body of salt water" },
+          { word: "COUNTRY", clue: "Nation with its own government" },
+          { word: "CAPITAL", clue: "City housing regional government" },
+          { word: "MOUNTAIN", clue: "Large natural elevation of the earth" },
+          { word: "RIVER", clue: "Natural flowing watercourse" },
+          { word: "VALLEY", clue: "Low area of land between hills" },
+          { word: "DESERT", clue: "Dry, sandy area with little rain" },
+          { word: "CANYON", clue: "Deep gorge cut by a river" },
+          { word: "ISLAND", clue: "Land mass surrounded by water" },
+          { word: "PENINSULA", clue: "Land surrounded by water on three sides" },
+          { word: "VOLCANO", clue: "Mountain venting lava and gas" },
+          { word: "EQUATOR", clue: "Imaginary dividing line of latitude" },
+          { word: "LATITUDE", clue: "Horizontal coordinate lines" },
+          { word: "LONGITUDE", clue: "Vertical coordinate lines" },
+          { word: "GLACIER", clue: "Slow moving mass of ice" },
+          { word: "PLATEAU", clue: "Flat-topped elevated land" },
+          { word: "COMPASS", clue: "Directional navigation tool" },
+          { word: "MAPS", clue: "Visual representations of areas" },
+          { word: "HEMISPHERE", clue: "Half of the earth" }
+        ],
+        History: [
+          { word: "EMPIRE", clue: "Group of states under single rule" },
+          { word: "KINGDOM", clue: "State ruled by king or queen" },
+          { word: "DYNASTY", clue: "Line of hereditary rulers" },
+          { word: "MONARCH", clue: "Sovereign head of state" },
+          { word: "EMPEROR", clue: "Ruler of a great empire" },
+          { word: "PHARAOH", clue: "Ruler of ancient Egypt" },
+          { word: "CASTLE", clue: "Fortified medieval structure" },
+          { word: "KNIGHT", clue: "Armored medieval warrior" },
+          { word: "CRUSADE", clue: "Medieval military expedition" },
+          { word: "RENAISSANCE", clue: "European period of cultural rebirth" },
+          { word: "REVOLUTION", clue: "Forcible overthrow of government" },
+          { word: "TREATY", clue: "Formal agreement between states" },
+          { word: "COLONY", clue: "Settlement controlled by parent nation" },
+          { word: "ARCHEOLOGY", clue: "Study of human history via artifacts" },
+          { word: "CIVILIZATION", clue: "Advanced stage of human society" },
+          { word: "FEUDALISM", clue: "Medieval social hierarchy system" },
+          { word: "ANCIENT", clue: "Belonging to the distant past" },
+          { word: "MEDIEVAL", clue: "Relating to the Middle Ages" },
+          { word: "CONQUEST", clue: "Subjugation of territory by force" },
+          { word: "REPUBLIC", clue: "State with elected representatives" }
+        ],
+        Sports: [
+          { word: "SOCCER", clue: "Game played by kicking a ball" },
+          { word: "BASKETBALL", clue: "Court game with hoops and orange ball" },
+          { word: "TENNIS", clue: "Racket sport on grass or clay" },
+          { word: "BASEBALL", clue: "Bat-and-ball game with bases" },
+          { word: "VOLLEYBALL", clue: "Net game hitting ball with hands" },
+          { word: "ATHLETICS", clue: "Collection of track and field events" },
+          { word: "RUNNING", clue: "Sprinting or jogging speed sport" },
+          { word: "SWIMMING", clue: "Water racing sport" },
+          { word: "GYMNASTICS", clue: "Acrobatic exercises on apparatus" },
+          { word: "CYCLING", clue: "Bicycle racing sport" },
+          { word: "BOXING", clue: "Fist combat in a ring" },
+          { word: "MARATHON", clue: "Long-distance road running race" },
+          { word: "STADIUM", clue: "Arena for sporting events" },
+          { word: "REFEREE", clue: "Official enforcing rules in games" },
+          { word: "CHAMPION", clue: "Winner of a tournament" },
+          { word: "TROPHY", clue: "Prize representing victory" },
+          { word: "MEDAL", clue: "Circular metal award (gold/silver)" },
+          { word: "ATHLETE", clue: "Person proficient in sports" },
+          { word: "OLYMPICS", clue: "Global quadrennial sporting games" },
+          { word: "GOLF", clue: "Club and small ball course sport" }
+        ]
+      },
+      Spanish: {
+        Animals: [
+          { word: "LEON", clue: "El rey de la selva" },
+          { word: "TIGRE", clue: "Gran felino de pelaje a rayas" },
+          { word: "ELEFANTE", clue: "Mamífero terrestre más grande con trompa" },
+          { word: "JIRAFA", clue: "Mamífero más alto del mundo con cuello largo" },
+          { word: "CEBRA", clue: "Mamífero de pelaje rayado blanco y negro" },
+          { word: "PINGUINO", clue: "Ave marina no voladora del hemisferio sur" },
+          { word: "CANGURO", clue: "Marsupial australiano saltador" },
+          { word: "DELFIN", clue: "Mamífero marino inteligente de hocico largo" },
+          { word: "GUEPARDO", clue: "El animal terrestre más rápido del mundo" },
+          { word: "PANDA", clue: "Oso de pelaje blanco y negro nativo de China" },
+          { word: "COALA", clue: "Marsupial herbívoro que come eucalipto" },
+          { word: "MONO", clue: "Primate inteligente con cola prensil" },
+          { word: "GORILA", clue: "El más grande de los primates vivos" },
+          { word: "AGUILA", clue: "Ave rapaz majestuosa de vista aguda" },
+          { word: "TIBURON", clue: "Depredador marino con esqueleto cartilaginoso" },
+          { word: "PULPO", clue: "Molusco marino con ocho brazos" },
+          { word: "CONEJO", clue: "Mamífero roedor de orejas largas" },
+          { word: "TORTUGA", clue: "Reptil de movimientos lentos con caparazón" },
+          { word: "BUHO", clue: "Ave rapaz nocturna considerada símbolo de sabiduría" },
+          { word: "ZORRO", clue: "Mamífero astuto de cola peluda" }
+        ],
+        Science: [
+          { word: "ATOMO", clue: "Unidad básica de la materia" },
+          { word: "MOLECULA", clue: "Conjunto de átomos enlazados" },
+          { word: "GRAVEDAD", clue: "Fuerza de atracción de los planetas" },
+          { word: "ELECTRON", clue: "Partícula subatómica con carga negativa" },
+          { word: "NEUTRON", clue: "Partícula subatómica sin carga eléctrica" },
+          { word: "PROTON", clue: "Partícula subatómica con carga positiva" },
+          { word: "GENETICA", clue: "Estudio de la herencia biológica" },
+          { word: "BACTERIA", clue: "Microorganismo unicelular procarionte" },
+          { word: "VIRUS", clue: "Agente infeccioso acelular" },
+          { word: "GALAXIA", clue: "Gran sistema de estrellas y materia" },
+          { word: "TELESCOPIO", clue: "Instrumento óptico para ver el espacio" },
+          { word: "MICROSCOPIO", clue: "Instrumento óptico para ver bacterias" },
+          { word: "FISICA", clue: "Ciencia que estudia materia y energía" },
+          { word: "BIOLOGIA", clue: "Ciencia que estudia los seres vivos" },
+          { word: "QUIMICA", clue: "Ciencia que estudia los elementos" },
+          { word: "ASTRONOMIA", clue: "Ciencia de los cuerpos celestes" },
+          { word: "GEOLOGIA", clue: "Estudio de las rocas de la Tierra" },
+          { word: "ENERGIA", clue: "Capacidad para realizar un trabajo" },
+          { word: "ESPECTRO", clue: "Banda de colores descompuestos" },
+          { word: "RADIO", clue: "Línea del centro al borde del círculo" }
+        ],
+        Geography: [
+          { word: "CONTINENTE", clue: "Gran extensión de tierra emergida" },
+          { word: "OCEANO", clue: "Gran masa de agua salada" },
+          { word: "PAIS", clue: "Territorio con gobierno propio" },
+          { word: "CAPITAL", clue: "Sede del gobierno del país" },
+          { word: "MONTANA", clue: "Elevación natural del terreno" },
+          { word: "RIO", clue: "Corriente de agua continua" },
+          { word: "VALLE", clue: "Llanura entre montañas" },
+          { word: "DESIERTO", clue: "Territorio arenoso sin lluvia" },
+          { word: "CANON", clue: "Paso estrecho excavado por un río" },
+          { word: "ISLA", clue: "Tierra rodeada de agua" },
+          { word: "PENINSULA", clue: "Tierra rodeada de agua salvo por un istmo" },
+          { word: "VOLCAN", clue: "Montaña con apertura que expulsa lava" },
+          { word: "ECUADOR", clue: "Línea imaginaria que divide la Tierra" },
+          { word: "LATITUD", clue: "Distancia angular al ecuador" },
+          { word: "LONGITUD", clue: "Distancia angular al meridiano" },
+          { word: "GLACIAR", clue: "Gran masa de hielo en movimiento" },
+          { word: "MESETA", clue: "Llanura elevada sobre el nivel del mar" },
+          { word: "BRUJULA", clue: "Instrumento de orientación con aguja" },
+          { word: "MAPA", clue: "Representación gráfica de un territorio" },
+          { word: "HEMISFERIO", clue: "Mitad de la esfera terrestre" }
+        ],
+        History: [
+          { word: "IMPERIO", clue: "Organización política liderada por emperador" },
+          { word: "REINO", clue: "Territorio gobernado por rey" },
+          { word: "DINASTIA", clue: "Familia de soberanos sucesivos" },
+          { word: "MONARCA", clue: "Gobernante supremo vitalicio" },
+          { word: "EMPERADOR", clue: "Soberano de un imperio" },
+          { word: "FARAON", clue: "Soberano del antiguo Egipto" },
+          { word: "CASTILLO", clue: "Fortificación medieval amurallada" },
+          { word: "CABALLERO", clue: "Guerrero a caballo medieval" },
+          { word: "CRUZADA", clue: "Expedición militar cristiana medieval" },
+          { word: "RENACIMIENTO", clue: "Época de renacer cultural en Europa" },
+          { word: "REVOLUCION", clue: "Cambio político violento y radical" },
+          { word: "TRATADO", clue: "Convenio formal firmado entre estados" },
+          { word: "COLONIA", clue: "Territorio dependiente de otro país" },
+          { word: "ARQUEOLOGIA", clue: "Estudio de ruinas antiguas y restos" },
+          { word: "CIVILIZACION", clue: "Estadio cultural avanzado de sociedades" },
+          { word: "FEUDALISMO", clue: "Sistema vasallático medieval de tierras" },
+          { word: "ANTIGUO", clue: "Perteneciente a la edad lejana" },
+          { word: "MEDIEVAL", clue: "Relativo al medievo" },
+          { word: "CONQUISTA", clue: "Obtención de territorio por armas" },
+          { word: "REPUBLICA", clue: "Sistema con presidente electo" }
+        ],
+        Sports: [
+          { word: "FUTBOL", clue: "Deporte de patear balón a meta" },
+          { word: "BALONCESTO", clue: "Deporte de encestar en canasta" },
+          { word: "TENIS", clue: "Deporte de raqueta sobre red" },
+          { word: "BEISBOL", clue: "Deporte de batear y correr bases" },
+          { word: "VOLEIBOL", clue: "Deporte de golpear balón sobre red" },
+          { word: "ATLETISMO", clue: "Pruebas de correr, saltar y lanzar" },
+          { word: "CORRER", clue: "Desplazarse a velocidad" },
+          { word: "NATACION", clue: "Carreras en el agua" },
+          { word: "GIMNASIA", clue: "Deporte de destreza física en barras" },
+          { word: "CICLISMO", clue: "Deporte de carreras en bicicleta" },
+          { word: "BOXEO", clue: "Lucha con guantes en cuadrilátero" },
+          { word: "MARATON", clue: "Carrera de gran fondo de 42 km" },
+          { word: "ESTADIO", clue: "Recinto para grandes eventos deportivos" },
+          { word: "ARBITRO", clue: "Juez deportivo que aplica el reglamento" },
+          { word: "CAMPEON", clue: "Vencedor de una copa" },
+          { word: "TROFEO", clue: "Copa de metal otorgada al ganador" },
+          { word: "MEDALLA", clue: "Insignia de metal para el podio" },
+          { word: "ATLETA", clue: "Deportista de alto rendimiento" },
+          { word: "OLIMPIADAS", clue: "Juegos deportivos mundiales cada 4 años" },
+          { word: "GOLF", clue: "Deporte de meter bola en hoyo" }
+        ]
+      },
+      French: {
+        Animals: [
+          { word: "LION", clue: "Le roi de la jungle" },
+          { word: "TIGRE", clue: "Grand félin à rayures" },
+          { word: "ELEPHANT", clue: "Le plus grand mammifère terrestre avec une trompe" },
+          { word: "GIRAFE", clue: "Mammifère au long cou" },
+          { word: "ZEBRE", clue: "Animal à rayures noires et blanches" },
+          { word: "MANCHOT", clue: "Oiseau marin incapable de voler" },
+          { word: "KANGOUROU", clue: "Marsupial sauteur d'Australie" },
+          { word: "DAUPHIN", clue: "Mammifère marin intelligent à rostre" },
+          { word: "GUEPARD", clue: "Le carnivore terrestre le plus rapide" },
+          { word: "PANDA", clue: "Ours noir et blanc mangeur de bambou" }
+        ],
+        Science: [
+          { word: "ATOME", clue: "Particule de base de la matière" },
+          { word: "MOLECULE", clue: "Groupe d'atomes liés" },
+          { word: "GRAVITE", clue: "Force d'attraction terrestre" },
+          { word: "ELECTRON", clue: "Particule chargée négativement" },
+          { word: "NEUTRON", clue: "Particule subatomique neutre" }
+        ],
+        Geography: [
+          { word: "CONTINENT", clue: "Grande étendue de terre" },
+          { word: "OCEAN", clue: "Vaste étendue d'eau salée" },
+          { word: "PAYS", clue: "Territoire d'une nation" },
+          { word: "CAPITALE", clue: "Ville où siège le gouvernement" },
+          { word: "MONTAGNE", clue: "Grande élévation du relief" }
+        ],
+        History: [
+          { word: "EMPIRE", clue: "Régime d'un empereur" },
+          { word: "ROYAUME", clue: "État gouverné par un roi" },
+          { word: "DYNASTIE", clue: "Succession de souverains" },
+          { word: "MONARQUE", clue: "Chef d'un royaume" },
+          { word: "EMPEREUR", clue: "Chef suprême de l'empire" }
+        ],
+        Sports: [
+          { word: "FOOTBALL", clue: "Jeu de ballon joué aux pieds" },
+          { word: "TENNIS", clue: "Jeu de raquette au filet" },
+          { word: "ATHLETISME", clue: "Courses, sauts et lancers" },
+          { word: "CYCLISME", clue: "Sport de course de vélo" },
+          { word: "STADE", clue: "Terrain pour compétitions" }
+        ]
+      },
+      German: {
+        Animals: [
+          { word: "LOEWE", clue: "König der Tiere" },
+          { word: "TIGER", clue: "Große gestreifte Raubkatze" },
+          { word: "ELEFANT", clue: "Größtes Landsäugetier mit Rüssel" },
+          { word: "GIRAFFE", clue: "Tier mit dem längsten Hals" },
+          { word: "ZEBRA", clue: "Gestreiftes Pferdetier" },
+          { word: "PINGUIN", clue: "Flugunfähiger Seevogel im Eis" },
+          { word: "KAENGURU", clue: "Australisches Beuteltier, das hüpft" },
+          { word: "DELPHIN", clue: "Sehr kluges Meeressäugetier" },
+          { word: "GEPARD", clue: "Schnellstes Landtier der Welt" },
+          { word: "PANDA", clue: "Bambus fressender Bär" }
+        ],
+        Science: [
+          { word: "ATOM", clue: "Kleinstes chemisches Teilchen" },
+          { word: "MOLEKUEL", clue: "Verbindung mehrerer Atome" },
+          { word: "GRAVITATION", clue: "Erdanziehungskraft" },
+          { word: "ELEKTRON", clue: "Negativ geladenes Teilchen" },
+          { word: "NEUTRON", clue: "Neutral geladenes Kernteilchen" }
+        ],
+        Geography: [
+          { word: "KONTINENT", clue: "Großer Erdteil" },
+          { word: "OZEAN", clue: "Weltmeer" },
+          { word: "LAND", clue: "Staatliches Territorium" },
+          { word: "HAUPTSTADT", clue: "Regierungssitz eines Landes" },
+          { word: "BERG", clue: "Hohe Geländeerhebung" }
+        ],
+        History: [
+          { word: "KAISERREICH", clue: "Herrschaftsgebiet eines Kaisers" },
+          { word: "KOENIGREICH", clue: "Staat eines Königs" },
+          { word: "DYNASTIE", clue: "Herrschergeschlecht" },
+          { word: "MONARCH", clue: "Alleinherrscher im Staat" },
+          { word: "KAISER", clue: "Höchster Herrschertitel" }
+        ],
+        Sports: [
+          { word: "FUSSBALL", clue: "Mannschaftssport mit Toren" },
+          { word: "TENNIS", clue: "Racketsport über ein Netz" },
+          { word: "MARATHON", clue: "Lauf über 42 Kilometer" },
+          { word: "RADSPORT", clue: "Rennen auf Fahrrädern" },
+          { word: "STADION", clue: "Große Sportarena" }
+        ]
+      }
+    };
+
+    // Initialize settings on load
+    window.onload = function() {
+      selectTheme('Animals'); // Highlight default theme on load
+    };
+
+    // --- Range Sizer Value Helpers ---
+    function updateRangeVal(rangeId, valId, suffix) {
+      document.getElementById(valId).innerText = suffix;
+    }
+
+    function getApiKey() {
+      return apiKey;
+    }
+
+    // --- UI Integration Helpers ---
+    function selectTheme(themeName) {
+      document.getElementById("themeSelect").value = themeName;
+      handleThemeChange();
+      
+      const themes = ['Animals', 'History', 'Science', 'Sports', 'Custom', 'AI_Magic'];
+      themes.forEach(t => {
+        const btn = document.getElementById(`theme-${t}`);
+        if (!btn) return;
+        
+        // Remove active class styles and border-transparent
+        btn.classList.remove('bg-active-Animals', 'bg-active-History', 'bg-active-Science', 'bg-active-Sports', 'bg-active-Custom', 'bg-active-AI_Magic', 'border-[#503c30]', 'border-transparent');
+        
+        if (t === themeName) {
+          btn.classList.add(`bg-active-${t}`, 'border-[#503c30]');
+        } else {
+          btn.classList.add('border-transparent');
+        }
+      });
+    }
+
+    function selectLanguageDirectly(lang) {
+      document.getElementById("languageSelect").value = lang;
+      handleLanguageChange();
+    }
+
+    function triggerFormSubmit() {
+      const submitBtn = document.getElementById("hiddenFormSubmit");
+      if (submitBtn) {
+        submitBtn.click();
+      }
+    }
+
+    function toggleAdvancedSettings() {
+      const panel = document.getElementById("advancedPanel");
+      const icon = document.getElementById("advancedIcon");
+      if (panel.classList.contains("hidden")) {
+        panel.classList.remove("hidden");
+        icon.innerText = "🔽";
+      } else {
+        panel.classList.add("hidden");
+        icon.innerText = "⚙️";
+      }
+    }
+
+    // --- UI State Handlers ---
+    function handleThemeChange() {
+      const theme = document.getElementById("themeSelect").value;
+      const customPanel = document.getElementById("customThemePanel");
+      const aiPanel = document.getElementById("aiMagicPanel");
+      
+      customPanel.classList.add("hidden");
+      aiPanel.classList.add("hidden");
+      
+      if (theme === "Custom") {
+        customPanel.classList.remove("hidden");
+      } else if (theme === "AI_Magic") {
+        aiPanel.classList.remove("hidden");
+      }
+    }
+
+    function handleLanguageChange() {
+      // Re-populate predefined or custom values depending on current state if needed
+      showToast("Info", `Language set to ${document.getElementById("languageSelect").value}`);
+    }
+
+    // --- Toast Notifications ---
+    function showToast(type, message) {
+      const container = document.getElementById("toastContainer");
+      const toast = document.createElement("div");
+      toast.className = `transform translate-y-5 opacity-0 transition-all duration-300 pointer-events-auto flex items-center p-4 rounded-2xl shadow-lg border text-sm max-w-md ${
+        type === 'Success' 
+          ? 'bg-teal-50 border-teal-100 text-teal-800' 
+          : type === 'Error' 
+          ? 'bg-red-50 border-red-100 text-red-800' 
+          : 'bg-orange-50 border-orange-100 text-orange-800'
+      }`;
+      
+      const icon = type === 'Success' ? '✨' : type === 'Error' ? '❌' : 'ℹ️';
+      
+      toast.innerHTML = `
+        <span class="mr-3 text-lg">${icon}</span>
+        <div class="flex-1 font-bold">${message}</div>
+        <button class="ml-4 text-gray-400 hover:text-gray-600 focus:outline-none" onclick="this.parentElement.remove()">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+        </button>
+      `;
+      
+      container.appendChild(toast);
+      setTimeout(() => toast.classList.remove("translate-y-5", "opacity-0"), 10);
+      
+      setTimeout(() => {
+        toast.classList.add("translate-y-5", "opacity-0");
+        setTimeout(() => toast.remove(), 300);
+      }, 4000);
+    }
+
+    // --- Loading Indicators ---
+    function setButtonLoading(buttonId, isLoading, loadingText = "Generating...") {
+      const button = document.getElementById(buttonId);
+      if (!button) return;
+      
+      if (isLoading) {
+        button.disabled = true;
+        button.dataset.originalHtml = button.innerHTML;
+        button.innerHTML = `
+          <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white inline-block" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+          </svg>
+          ${loadingText}
+        `;
+      } else {
+        button.disabled = false;
+        if (button.dataset.originalHtml) {
+          button.innerHTML = button.dataset.originalHtml;
+        }
+      }
+    }
+
+    // --- Sanitization Helper ---
+    function sanitizeWord(word, lang) {
+      let w = word.toUpperCase();
+      
+      if (lang === "German") {
+        w = w.replace(/Ä/g, "AE")
+             .replace(/Ö/g, "OE")
+             .replace(/Ü/g, "UE")
+             .replace(/ß/g, "SS");
+      }
+      
+      w = w.normalize("NFD").replace(/[\u0300-\u036f]/g, ""); // strip accents
+      return w.replace(/[^A-Z]/g, ""); // letters only
+    }
+
+    // --- Gemini API Connector with Exponential Backoff ---
+    async function callGeminiAPI(prompt, responseSchema = null) {
+      const key = getApiKey();
+      if (!key) {
+        throw new Error("Gemini API key is not configured! Please set the 'apiKey' variable in index.html.");
+      }
+      
+      const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${key}`;
+      
+      const payload = {
+        contents: [{ parts: [{ text: prompt }] }]
+      };
+      
+      if (responseSchema) {
+        payload.generationConfig = {
+          responseMimeType: "application/json",
+          responseSchema: responseSchema
+        };
+      }
+      
+      let delay = 1000;
+      const maxRetries = 3;
+      
+      for (let attempt = 0; attempt <= maxRetries; attempt++) {
+        try {
+          const response = await fetch(endpoint, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload)
+          });
+          
+          if (response.status === 429) {
+            if (attempt === maxRetries) {
+              throw new Error("API rate-limited too many times. Please try again in a moment.");
+            }
+            await new Promise(resolve => setTimeout(resolve, delay));
+            delay *= 2.5;
+            continue;
+          }
+          
+          if (!response.ok) {
+            const errBody = await response.json().catch(() => ({}));
+            const msg = errBody.error?.message || `HTTP error ${response.status}`;
+            throw new Error(`API Error: ${msg}`);
+          }
+          
+          const responseJson = await response.json();
+          const resultText = responseJson.candidates?.[0]?.content?.parts?.[0]?.text;
+          if (!resultText) {
+            throw new Error("Gemini response is empty.");
+          }
+          return resultText;
+          
+        } catch (error) {
+          if (attempt === maxRetries) {
+            throw error;
+          }
+          await new Promise(resolve => setTimeout(resolve, delay));
+          delay *= 2;
+        }
+      }
+    }
+
+    // --- AI Feature 1: AI Magic Theme Generator ---
+    async function generateWordsWithAI() {
+      const topic = document.getElementById("aiTopicInput").value.trim();
+      if (!topic) {
+        showToast("Warning", "Please input what the puzzle should be about first!");
+        return;
+      }
+      
+      const wordCount = document.getElementById("wordCountRange").value;
+      const lang = document.getElementById("languageSelect").value;
+      const difficulty = document.querySelector('input[name="difficulty"]:checked').value;
+      
+      setButtonLoading("aiGenerateBtn", true, "AI Magic is conjuring...");
+      
+      // Strict Prompt Logic
+      const prompt = `Generate exactly ${wordCount} unique words and clues related to the topic: "${topic}". 
+Language of output: ${lang}. 
+Difficulty of clues: ${difficulty} (Easy = simple synonyms/definitions; Medium = context clues/phrases; Hard = clever wordplay/trivia).
+
+CRITICAL Constraints:
+- Each word must consist ONLY of letters (no spaces, hyphens, numbers, or special symbols).
+- Words must be between 3 and 12 characters long.
+- Return the output in JSON format complying with the schema provided.`;
+
+      const schema = {
+        type: "OBJECT",
+        properties: {
+          words: {
+            type: "ARRAY",
+            description: "List of words and their corresponding clues",
+            items: {
+              type: "OBJECT",
+              properties: {
+                word: { type: "STRING", description: "The word in uppercase letters only (e.g. SPACE)" },
+                clue: { type: "STRING", description: "The clever crossword clue" }
+              },
+              required: ["word", "clue"]
+            }
+          }
+        },
+        required: ["words"]
+      };
+      
+      try {
+        const jsonText = await callGeminiAPI(prompt, schema);
+        const data = JSON.parse(jsonText);
+        
+        if (!data.words || data.words.length === 0) {
+          throw new Error("No words returned in JSON block.");
+        }
+        
+        // Format results as WORD:Clue text list
+        const textList = data.words.map(w => `${sanitizeWord(w.word, lang)}:${w.clue}`).join("\n");
+        
+        // Transition theme setting to Custom to display the text area
+        document.getElementById("themeSelect").value = "Custom";
+        handleThemeChange();
+        
+        document.getElementById("customWordsInput").value = textList;
+        showToast("Success", `AI magic generated ${data.words.length} words!`);
+      } catch (error) {
+        showToast("Error", error.message);
+      } finally {
+        setButtonLoading("aiGenerateBtn", false);
+      }
+    }
+
+    // --- AI Feature 2: Auto Clue Helper ---
+    async function autoGenerateMissingClues() {
+      const textarea = document.getElementById("customWordsInput");
+      const text = textarea.value.trim();
+      if (!text) {
+        showToast("Warning", "Please input some words in the text area first!");
+        return;
+      }
+      
+      const lines = text.split("\n");
+      const wordsToGenerate = [];
+      const linesData = [];
+      
+      lines.forEach((line, idx) => {
+        const parts = line.split(":");
+        const rawWord = parts[0].trim();
+        const rawClue = parts[1] ? parts[1].trim() : "";
+        
+        if (rawWord) {
+          linesData.push({ word: rawWord, clue: rawClue, lineIdx: idx });
+          if (!rawClue) {
+            wordsToGenerate.push(rawWord);
+          }
+        }
+      });
+      
+      if (wordsToGenerate.length === 0) {
+        showToast("Info", "All words already have clues! Nothing to generate.");
+        return;
+      }
+      
+      const lang = document.getElementById("languageSelect").value;
+      const difficulty = document.querySelector('input[name="difficulty"]:checked').value;
+      
+      setButtonLoading("clueHelperBtn", true, "Generating clues...");
+      
+      const prompt = `Generate clever crossword clues for these specific words: ${JSON.stringify(wordsToGenerate)}.
+Language of clues: ${lang}.
+Difficulty mode: ${difficulty}.
+Return the output in JSON format complying with the schema provided.`;
+
+      const schema = {
+        type: "OBJECT",
+        properties: {
+          clues: {
+            type: "ARRAY",
+            items: {
+              type: "OBJECT",
+              properties: {
+                word: { type: "STRING" },
+                clue: { type: "STRING" }
+              },
+              required: ["word", "clue"]
+            }
+          }
+        },
+        required: ["clues"]
+      };
+      
+      try {
+        const jsonText = await callGeminiAPI(prompt, schema);
+        const data = JSON.parse(jsonText);
+        
+        if (!data.clues) {
+          throw new Error("No clues returned.");
+        }
+        
+        // Match back to the words
+        data.clues.forEach(item => {
+          const match = linesData.find(ld => sanitizeWord(ld.word, lang) === sanitizeWord(item.word, lang) && !ld.clue);
+          if (match) {
+            match.clue = item.clue;
+          }
+        });
+        
+        // Re-construct the textarea content
+        const reconstructedText = linesData.map(ld => `${ld.word}:${ld.clue}`).join("\n");
+        textarea.value = reconstructedText;
+        showToast("Success", `Created clues for ${wordsToGenerate.length} words!`);
+      } catch (error) {
+        showToast("Error", error.message);
+      } finally {
+        setButtonLoading("clueHelperBtn", false);
+      }
+    }
+
+    // --- Crossword Generation Grid Logic ---
+    class CrosswordGenerator {
+      constructor(gridSize) {
+        this.gridSize = gridSize;
+        this.grid = Array(gridSize).fill(null).map(() => Array(gridSize).fill(null));
+        this.placedWords = [];
+        this.numberMap = {};
+      }
+      
+      generate(words, lang) {
+        // Sanitize words list
+        let cleanWords = words.map(item => {
+          return {
+            word: sanitizeWord(item.word, lang),
+            clue: item.clue,
+            originalWord: item.word
+          };
+        }).filter(item => item.word.length >= 2 && item.word.length <= this.gridSize);
+        
+        if (cleanWords.length === 0) {
+          return { success: false, error: "No valid words of appropriate length found." };
+        }
+        
+        // Sort words by length descending (crucial for grid packing)
+        cleanWords.sort((a, b) => b.word.length - a.word.length);
+        
+        // Place first word horizontally near the center
+        const first = cleanWords[0];
+        const startRow = Math.floor(this.gridSize / 2);
+        const startCol = Math.floor((this.gridSize - first.word.length) / 2);
+        this.placeWord(first.word, first.clue, startRow, startCol, 'across');
+        
+        // Place remaining words dynamically
+        const remaining = cleanWords.slice(1);
+        
+        for (let item of remaining) {
+          let bestPlacement = null;
+          
+          // Loop placed words and try intersections
+          for (let placed of this.placedWords) {
+            for (let i = 0; i < item.word.length; i++) {
+              for (let j = 0; j < placed.word.length; j++) {
+                if (item.word[i] === placed.word[j]) {
+                  // Found matching letter. Calculate candidate location based on perpendicular direction
+                  let r, c, d;
+                  if (placed.dir === 'across') {
+                    d = 'down';
+                    r = placed.row - i;
+                    c = placed.col + j;
+                  } else {
+                    d = 'across';
+                    r = placed.row + j;
+                    c = placed.col - i;
+                  }
+                  
+                  // Check if placement candidate is valid
+                  const intersections = this.checkPlacement(item.word, r, c, d);
+                  if (intersections > 0) {
+                    // Score the fit. Higher intersections are better. Minor bonus for centering.
+                    const rCenter = this.gridSize / 2;
+                    const cCenter = this.gridSize / 2;
+                    const wordCentroidR = r + (d === 'down' ? item.word.length / 2 : 0);
+                    const wordCentroidC = c + (d === 'across' ? item.word.length / 2 : 0);
+                    const distFromCenter = Math.abs(wordCentroidR - rCenter) + Math.abs(wordCentroidC - cCenter);
+                    
+                    const score = (intersections * 15) - (distFromCenter * 0.15);
+                    
+                    if (!bestPlacement || score > bestPlacement.score) {
+                      bestPlacement = { row: r, col: c, dir: d, score: score };
+                    }
+                  }
+                }
+              }
+            }
+          }
+          
+          if (bestPlacement) {
+            this.placeWord(item.word, item.clue, bestPlacement.row, bestPlacement.col, bestPlacement.dir);
+          }
+        }
+        
+        if (this.placedWords.length === 0) {
+          return { success: false, error: "Failed to place any words in the grid." };
+        }
+        
+        this.assignNumbers();
+        
+        return {
+          success: true,
+          grid: this.grid,
+          placedWords: this.placedWords,
+          numberMap: this.numberMap,
+          gridSize: this.gridSize
+        };
+      }
+      
+      checkPlacement(word, row, col, dir) {
+        const len = word.length;
+        
+        // Boundary validation
+        if (dir === 'across') {
+          if (col < 0 || col + len > this.gridSize || row < 0 || row >= this.gridSize) return 0;
+        } else {
+          if (row < 0 || row + len > this.gridSize || col < 0 || col >= this.gridSize) return 0;
+        }
+        
+        // Collision / Adjacency limits
+        // Pre-cell edge check
+        if (dir === 'across') {
+          if (col - 1 >= 0 && this.grid[row][col - 1] !== null) return 0;
+          if (col + len < this.gridSize && this.grid[row][col + len] !== null) return 0;
+        } else {
+          if (row - 1 >= 0 && this.grid[row - 1][col] !== null) return 0;
+          if (row + len < this.gridSize && this.grid[row + len][col] !== 0 && this.grid[row + len][col] !== null) return 0;
+        }
+        
+        let intersections = 0;
+        
+        for (let k = 0; k < len; k++) {
+          const r = row + (dir === 'down' ? k : 0);
+          const c = col + (dir === 'across' ? k : 0);
+          const currentCell = this.grid[r][c];
+          
+          if (currentCell !== null) {
+            // Must match letters exactly on intersections
+            if (currentCell !== word[k]) {
+              return 0; 
+            }
+            intersections++;
+          } else {
+            // Perpendicular adjacency checks (to stop words sticking parallel to each other)
+            if (dir === 'across') {
+              if (r - 1 >= 0 && this.grid[r - 1][c] !== null) return 0;
+              if (r + 1 < this.gridSize && this.grid[r + 1][c] !== null) return 0;
+            } else {
+              if (c - 1 >= 0 && this.grid[r][c - 1] !== null) return 0;
+              if (c + 1 < this.gridSize && this.grid[r][c + 1] !== null) return 0;
+            }
+          }
+        }
+        
+        return intersections;
+      }
+      
+      placeWord(word, clue, row, col, dir) {
+        const len = word.length;
+        for (let k = 0; k < len; k++) {
+          const r = row + (dir === 'down' ? k : 0);
+          const c = col + (dir === 'across' ? k : 0);
+          this.grid[r][c] = word[k];
+        }
+        this.placedWords.push({
+          word: word,
+          clue: clue,
+          row: row,
+          col: col,
+          dir: dir,
+          length: len,
+          num: null
+        });
+      }
+      
+      assignNumbers() {
+        let count = 1;
+        this.numberMap = {};
+        
+        // We traverse row by row, col by col (top-to-bottom, left-to-right)
+        for (let r = 0; r < this.gridSize; r++) {
+          for (let c = 0; c < this.gridSize; c++) {
+            if (this.grid[r][c] !== null) {
+              let startAcross = false;
+              let startDown = false;
+              
+              // Across Word Start Detection
+              if ((c === 0 || this.grid[r][c - 1] === null) && (c + 1 < this.gridSize && this.grid[r][c + 1] !== null)) {
+                if (this.placedWords.some(w => w.row === r && w.col === c && w.dir === 'across')) {
+                  startAcross = true;
+                }
+              }
+              
+              // Down Word Start Detection
+              if ((r === 0 || this.grid[r - 1][c] === null) && (r + 1 < this.gridSize && this.grid[r + 1][c] !== null)) {
+                if (this.placedWords.some(w => w.row === r && w.col === c && w.dir === 'down')) {
+                  startDown = true;
+                }
+              }
+              
+              if (startAcross || startDown) {
+                this.numberMap[`${r},${c}`] = count;
+                
+                if (startAcross) {
+                  const w = this.placedWords.find(w => w.row === r && w.col === c && w.dir === 'across');
+                  if (w) w.num = count;
+                }
+                if (startDown) {
+                  const w = this.placedWords.find(w => w.row === r && w.col === c && w.dir === 'down');
+                  if (w) w.num = count;
+                }
+                
+                count++;
+              }
+            }
+          }
+        }
+      }
+    }
+
+    // --- Generate submission router ---
+    async function handleGenerateSubmit(event) {
+      event.preventDefault();
+      
+      const theme = document.getElementById("themeSelect").value;
+      const lang = document.getElementById("languageSelect").value;
+      const wordCount = parseInt(document.getElementById("wordCountRange").value);
+      const gridSize = parseInt(document.getElementById("gridSizeRange").value);
+      const difficulty = document.querySelector('input[name="difficulty"]:checked').value;
+      
+      let words = [];
+      
+      if (theme === "Custom") {
+        const text = document.getElementById("customWordsInput").value.trim();
+        if (!text) {
+          showToast("Warning", "Please supply custom words and clues first!");
+          return;
+        }
+        
+        const lines = text.split("\n");
+        lines.forEach(line => {
+          const parts = line.split(":");
+          const w = parts[0] ? parts[0].trim() : "";
+          const c = parts[1] ? parts[1].trim() : `Clue for ${w}`;
+          if (w) {
+            words.push({ word: w, clue: c });
+          }
+        });
+      } else if (theme === "AI_Magic") {
+        // Retrieve the populated custom panel content generated by the button
+        const text = document.getElementById("customWordsInput").value.trim();
+        if (!text) {
+          showToast("Warning", "Please click 'Generate Words with AI' before generating the puzzle!");
+          return;
+        }
+        
+        const lines = text.split("\n");
+        lines.forEach(line => {
+          const parts = line.split(":");
+          const w = parts[0] ? parts[0].trim() : "";
+          const c = parts[1] ? parts[1].trim() : `Clue for ${w}`;
+          if (w) {
+            words.push({ word: w, clue: c });
+          }
+        });
+      } else {
+        // Predefined theme loading from local dictionary
+        const dict = dictionaries[lang]?.[theme] || dictionaries["English"]?.[theme];
+        if (!dict) {
+          showToast("Error", `Dictionary data missing for language: ${lang}`);
+          return;
+        }
+        
+        // Shuffle and slice to target words count
+        const shuffled = [...dict].sort(() => 0.5 - Math.random());
+        words = shuffled.slice(0, Math.min(wordCount, shuffled.length));
+        
+        if (words.length < wordCount && getApiKey()) {
+          // Optional AI expansion: if they want 30 words but we only have 20, we can prompt AI to fill remaining
+          showToast("Info", `Loading extra dictionary words using Gemini API...`);
+          // But to be fast, let's just proceed with available local words or notify
+        }
+      }
+      
+      setButtonLoading("generatePuzzleBtn", true, "Assembling grid...");
+      
+      // Perform generation in a small timeout to let loading animation trigger
+      setTimeout(() => {
+        try {
+          const generator = new CrosswordGenerator(gridSize);
+          const result = generator.generate(words, lang);
+          
+          if (!result.success) {
+            throw new Error(result.error || "Failed to place crossword words.");
+          }
+          
+          currentPuzzle = result;
+          currentPuzzle.theme = theme === "Custom" ? "Custom" : theme === "AI_Magic" ? document.getElementById("aiTopicInput").value : theme;
+          currentPuzzle.difficulty = difficulty;
+          
+          showAnswers = false; // reset preview toggle
+          solvedClues.clear(); // reset progress checks
+          
+          // Reveal Card and scroll
+          document.getElementById("emptyStateCard").classList.add("hidden");
+          const previewCard = document.getElementById("livePreviewCard");
+          previewCard.classList.remove("hidden");
+          
+          // Populate clues UI
+          populateCluesUI();
+          
+          // Set metadata title
+          document.getElementById("puzzleMetadataText").innerText = `${currentPuzzle.theme}  |  ${currentPuzzle.difficulty}  |  Grid: ${currentPuzzle.gridSize}x${currentPuzzle.gridSize}`;
+          
+          // Draw Canvas
+          drawCanvas();
+          
+          // Smooth scroll
+          previewCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          
+          const placedCount = result.placedWords.length;
+          const totalCount = words.length;
+          if (placedCount < totalCount) {
+            showToast("Info", `Constructed grid placing ${placedCount} of ${totalCount} words!`);
+          } else {
+            showToast("Success", `Crossword generated successfully with ${placedCount} words!`);
+          }
+          
+        } catch (err) {
+          showToast("Error", err.message);
+        } finally {
+          setButtonLoading("generatePuzzleBtn", false);
+        }
+      }, 300);
+    }
+
+    // --- HTML5 Canvas Interactive Renderer ---
+    function drawCanvas() {
+      const canvas = document.getElementById("crosswordCanvas");
+      if (!canvas || !currentPuzzle) return;
+      
+      const ctx = canvas.getContext("2d");
+      const parentWidth = canvas.parentElement.clientWidth;
+      const size = Math.min(parentWidth - 10, 550);
+      
+      // Handle High DPI displays cleanly
+      const dpr = window.devicePixelRatio || 1;
+      canvas.width = size * dpr;
+      canvas.height = size * dpr;
+      canvas.style.width = `${size}px`;
+      canvas.style.height = `${size}px`;
+      ctx.scale(dpr, dpr);
+      
+      const N = currentPuzzle.gridSize;
+      
+      // Calculate margins to allow numbers to sit outside the boxes on top/left
+      const outsideMargin = size * 0.08; // 8% padding
+      const drawSize = size - outsideMargin;
+      const cellSize = drawSize / N;
+      
+      ctx.clearRect(0, 0, size, size);
+      
+      // Setup click detection helper on canvas (once)
+      if (!canvas.dataset.hasListener) {
+        canvas.addEventListener("click", handleCanvasClick);
+        canvas.dataset.hasListener = "true";
+      }
+      
+      // Double check activeWord highlighting cells array
+      let highlightedCells = [];
+      if (activeWord) {
+        for (let k = 0; k < activeWord.length; k++) {
+          const r = activeWord.row + (activeWord.dir === 'down' ? k : 0);
+          const c = activeWord.col + (activeWord.dir === 'across' ? k : 0);
+          highlightedCells.push({ r, c });
+        }
+      }
+      
+      // Render
+      for (let r = 0; r < N; r++) {
+        for (let c = 0; c < N; c++) {
+          const char = currentPuzzle.grid[r][c];
+          if (char !== null) {
+            const x = outsideMargin + (c * cellSize);
+            const y = outsideMargin + (r * cellSize);
+            
+            // Check highlights
+            const isWordHighlighted = highlightedCells.some(cell => cell.r === r && cell.c === c);
+            const isCursorCell = selectedCell && selectedCell.r === r && selectedCell.c === c;
+            
+            // Fill Box
+            if (isCursorCell) {
+              ctx.fillStyle = "#ffd085"; // Orange cursor highlight
+            } else if (isWordHighlighted) {
+              ctx.fillStyle = "#e0f2f1"; // Soft teal active word highlight
+            } else {
+              ctx.fillStyle = "#ffffff";
+            }
+            
+            ctx.fillRect(x, y, cellSize, cellSize);
+            
+            // Draw Box Border
+            ctx.strokeStyle = isWordHighlighted ? "#00897b" : "#ffedd5";
+            ctx.lineWidth = isWordHighlighted ? 2 : 1.5;
+            ctx.strokeRect(x, y, cellSize, cellSize);
+            
+            // Draw word starting label (outside top-left)
+            const num = currentPuzzle.numberMap[`${r},${c}`];
+            if (num) {
+              ctx.fillStyle = "#1e293b";
+              ctx.font = `bold ${Math.max(8, cellSize * 0.28)}px Nunito, sans-serif`;
+              ctx.textAlign = "right";
+              ctx.textBaseline = "middle";
+              // Position it slightly above/left of the active box
+              ctx.fillText(num.toString(), x - (cellSize * 0.15), y - (cellSize * 0.12));
+            }
+            
+            // Draw Answer Character Preview
+            if (showAnswers) {
+              ctx.fillStyle = "#475569";
+              ctx.font = `bold ${cellSize * 0.55}px Nunito, sans-serif`;
+              ctx.textAlign = "center";
+              ctx.textBaseline = "middle";
+              // Offset down slightly for Nunito vertical alignment balance
+              ctx.fillText(char, x + (cellSize / 2), y + (cellSize / 2) + (cellSize * 0.05));
+            }
+          }
+        }
+      }
+    }
+
+    // Canvas click coordination
+    function handleCanvasClick(event) {
+      if (!currentPuzzle) return;
+      
+      const canvas = document.getElementById("crosswordCanvas");
+      const rect = canvas.getBoundingClientRect();
+      const clickX = event.clientX - rect.left;
+      const clickY = event.clientY - rect.top;
+      
+      const size = rect.width;
+      const outsideMargin = size * 0.08;
+      const drawSize = size - outsideMargin;
+      const N = currentPuzzle.gridSize;
+      const cellSize = drawSize / N;
+      
+      // Calculate clicked row and col
+      const col = Math.floor((clickX - outsideMargin) / cellSize);
+      const row = Math.floor((clickY - outsideMargin) / cellSize);
+      
+      if (row >= 0 && row < N && col >= 0 && col < N) {
+        const char = currentPuzzle.grid[row][col];
+        if (char !== null) {
+          // Find matching placed words covering this cell
+          const matches = currentPuzzle.placedWords.filter(w => {
+            if (w.dir === 'across') {
+              return w.row === row && col >= w.col && col < w.col + w.length;
+            } else {
+              return w.col === col && row >= w.row && row < w.row + w.length;
+            }
+          });
+          
+          if (matches.length > 0) {
+            let nextWord = matches[0];
+            
+            // If cell has both directions and we clicked current cell, toggle direction
+            if (matches.length > 1) {
+              if (selectedCell && selectedCell.r === row && selectedCell.c === col) {
+                const currentDir = selectedDir || 'across';
+                nextWord = matches.find(w => w.dir !== currentDir) || matches[0];
+              }
+            }
+            
+            selectWord(nextWord, { r: row, c: col });
+          }
+        }
+      }
+    }
+
+    // Highlight word selection
+    function selectWord(word, cellFocus = null) {
+      activeWord = word;
+      selectedCell = cellFocus || { r: word.row, c: word.col };
+      selectedDir = word.dir;
+      
+      // Redraw Canvas
+      drawCanvas();
+      
+      // Scroll corresponding clue into view and highlight in lists
+      const clueId = `clue-${word.dir}-${word.num}`;
+      
+      // Remove previous list highlights
+      document.querySelectorAll(".clue-list-item").forEach(el => {
+        el.classList.remove("bg-teal-50", "border-tealTheme-500/30", "ring-1", "ring-tealTheme-500/20");
+      });
+      
+      // Add highlight to current
+      const activeClueEl = document.getElementById(clueId);
+      if (activeClueEl) {
+        activeClueEl.classList.add("bg-teal-50", "border-tealTheme-500/30", "ring-1", "ring-tealTheme-500/20");
+        activeClueEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }
+    }
+
+    function toggleAnswerPreview() {
+      showAnswers = !showAnswers;
+      const btn = document.getElementById("toggleAnswersBtn");
+      const txt = document.getElementById("toggleAnswersText");
+      
+      if (showAnswers) {
+        txt.innerText = "Hide Solution Preview";
+        btn.classList.add("bg-orange-100", "border-orange-200");
+      } else {
+        txt.innerText = "Show Solution Preview";
+        btn.classList.remove("bg-orange-100", "border-orange-200");
+      }
+      
+      drawCanvas();
+    }
+
+    // --- Clues UI List Builders ---
+    function populateCluesUI() {
+      const acrossList = document.getElementById("acrossCluesList");
+      const downList = document.getElementById("downCluesList");
+      
+      acrossList.innerHTML = "";
+      downList.innerHTML = "";
+      
+      // Sort words by num
+      const across = currentPuzzle.placedWords
+        .filter(w => w.dir === 'across' && w.num !== null)
+        .sort((a, b) => a.num - b.num);
+      const down = currentPuzzle.placedWords
+        .filter(w => w.dir === 'down' && w.num !== null)
+        .sort((a, b) => a.num - b.num);
+        
+      // Build Across Items
+      across.forEach(w => {
+        acrossList.appendChild(createClueItemElement(w));
+      });
+      
+      // Build Down Items
+      down.forEach(w => {
+        downList.appendChild(createClueItemElement(w));
+      });
+    }
+
+    function createClueItemElement(word) {
+      const key = `${word.dir}-${word.num}`;
+      const div = document.createElement("div");
+      div.id = `clue-${word.dir}-${word.num}`;
+      div.className = "clue-list-item flex items-start space-x-3 p-2.5 rounded-xl border border-transparent hover:bg-orange-50/50 hover:border-orange-100 cursor-pointer transition-all text-xs font-semibold text-slate-700";
+      
+      // Action click on clue selects word
+      div.addEventListener("click", (e) => {
+        // Don't select if they click the checkbox specifically
+        if (e.target.tagName !== 'INPUT') {
+          selectWord(word);
+        }
+      });
+      
+      const isChecked = solvedClues.has(key);
+      
+      div.innerHTML = `
+        <input type="checkbox" ${isChecked ? 'checked' : ''} onchange="toggleClueSolved('${key}')" class="w-4 h-4 rounded text-tealTheme-500 focus:ring-tealTheme-500 accent-tealTheme-600 cursor-pointer mt-0.5">
+        <div class="flex-1 ${isChecked ? 'line-through opacity-40' : ''}" id="text-${key}">
+          <span class="font-extrabold text-coral-600 mr-1">${word.num}.</span>
+          <span>${word.clue}</span>
+        </div>
+      `;
+      
+      return div;
+    }
+
+    function toggleClueSolved(key) {
+      const textEl = document.getElementById(`text-${key}`);
+      if (solvedClues.has(key)) {
+        solvedClues.delete(key);
+        if (textEl) textEl.classList.remove("line-through", "opacity-40");
+      } else {
+        solvedClues.add(key);
+        if (textEl) textEl.classList.add("line-through", "opacity-40");
+      }
+    }
+
+    // --- jsPDF Engine Compile PDF Client-Side ---
+    function generatePDF() {
+      if (!currentPuzzle) return;
+      
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF('p', 'mm', 'a4'); // Standard A4 layout: 210 x 297 mm
+      
+      const N = currentPuzzle.gridSize;
+      const margin = 20;
+      const availableWidth = 170; // 210 - 2*margin
+      
+      // Dynamically calculate grid size on PDF. Limit cellSize to max 5.5mm so it fits.
+      const cellSize = Math.min(5.5, availableWidth / N);
+      const gridWidth = cellSize * N;
+      const xStart = (210 - gridWidth) / 2;
+      const yStart = 45;
+      
+      // Page 1: The Crossword Grid (Empty write-in)
+      drawPDFHeader(doc, "CROSSWORDS PUZZLE", 1);
+      drawPDFGrid(doc, xStart, yStart, cellSize, false);
+      
+      // Clues listing starts below the grid
+      const gridEnd = yStart + gridWidth;
+      let yClues = gridEnd + 15;
+      
+      // If the grid takes too much space, start clues on Page 2
+      if (yClues > 225) {
+        doc.addPage();
+        drawPDFHeader(doc, "CROSSWORDS PUZZLE - CLUES", 2);
+        yClues = 40;
+      } else {
+        doc.setDrawColor(220);
+        doc.setLineWidth(0.3);
+        doc.line(15, yClues - 5, 195, yClues - 5);
+      }
+      
+      // Draw Clues (Across & Down lists with pagination)
+      drawPDFClues(doc, yClues);
+      
+      // Fresh Dedicated Page: The Grid Solution
+      doc.addPage();
+      const solutionPageNum = doc.getNumberOfPages();
+      drawPDFHeader(doc, "SOLUTION", solutionPageNum);
+      drawPDFGrid(doc, xStart, yStart, cellSize, true); // true = print characters in boxes
+      
+      // Inject footer on every page
+      const totalPages = doc.getNumberOfPages();
+      for (let i = 1; i <= totalPages; i++) {
+        doc.setPage(i);
+        drawPDFFooter(doc, i, totalPages);
+      }
+      
+      const sanitizedTheme = currentPuzzle.theme.toLowerCase().replace(/[^a-z0-9]+/g, "-");
+      doc.save(`crossword-${sanitizedTheme}.pdf`);
+      showToast("Success", "PDF exported & downloaded!");
+    }
+
+    function drawPDFHeader(doc, title, pageNum) {
+      doc.setFont("Helvetica", "bold");
+      doc.setFontSize(22);
+      doc.setTextColor(0, 0, 0);
+      doc.text(title, 105, 22, { align: "center" });
+      
+      doc.setFont("Helvetica", "normal");
+      doc.setFontSize(9);
+      doc.setTextColor(80, 80, 80);
+      
+      const themeText = `Theme: ${currentPuzzle.theme}`;
+      const diffText = `Difficulty: ${currentPuzzle.difficulty}`;
+      const sizeText = `Grid Size: ${currentPuzzle.gridSize}x${currentPuzzle.gridSize}`;
+      
+      doc.text(`${themeText}   |   ${diffText}   |   ${sizeText}`, 105, 30, { align: "center" });
+      
+      doc.setDrawColor(180);
+      doc.setLineWidth(0.4);
+      doc.line(15, 34, 195, 34);
+    }
+
+    function drawPDFGrid(doc, xStart, yStart, cellSize, fillLetters) {
+      const N = currentPuzzle.gridSize;
+      
+      // Render active cells
+      doc.setDrawColor(0, 0, 0);
+      doc.setLineWidth(0.25);
+      
+      for (let r = 0; r < N; r++) {
+        for (let c = 0; c < N; c++) {
+          const char = currentPuzzle.grid[r][c];
+          if (char !== null) {
+            const x = xStart + (c * cellSize);
+            const y = yStart + (r * cellSize);
+            
+            // Draw empty cell square
+            doc.setFillColor(255, 255, 255);
+            doc.rect(x, y, cellSize, cellSize, "FD");
+            
+            // Print number outside the box top-left
+            const num = currentPuzzle.numberMap[`${r},${c}`];
+            if (num) {
+              doc.setFont("Helvetica", "bold");
+              doc.setFontSize(cellSize * 1.5); // scaling point size based on dimensions (e.g. 5.5pt)
+              doc.setTextColor(0, 0, 0);
+              
+              // Shift outside: draw slightly to the left and top
+              doc.text(num.toString(), x - (cellSize * 0.16), y - (cellSize * 0.1), { align: "right" });
+            }
+            
+            // Print letter inside box if on Solution page
+            if (fillLetters) {
+              doc.setFont("Helvetica", "bold");
+              doc.setFontSize(cellSize * 2.2); // text size scaling (e.g. 10pt)
+              doc.setTextColor(0, 0, 0);
+              
+              const letterX = x + (cellSize / 2);
+              const letterY = y + (cellSize * 0.73); // vertical center balance
+              doc.text(char, letterX, letterY, { align: "center" });
+            }
+          }
+        }
+      }
+    }
+
+    function drawPDFClues(doc, yStart) {
+      let y = yStart;
+      
+      const across = currentPuzzle.placedWords
+        .filter(w => w.dir === 'across' && w.num !== null)
+        .sort((a, b) => a.num - b.num);
+      const down = currentPuzzle.placedWords
+        .filter(w => w.dir === 'down' && w.num !== null)
+        .sort((a, b) => a.num - b.num);
+        
+      doc.setFont("Helvetica", "bold");
+      doc.setFontSize(14);
+      doc.setTextColor(0, 0, 0);
+      doc.text("CLUES", 15, y);
+      y += 8;
+      
+      // Print ACROSS
+      doc.setFont("Helvetica", "bold");
+      doc.setFontSize(11);
+      doc.text("ACROSS", 15, y);
+      y += 6;
+      
+      doc.setFont("Helvetica", "normal");
+      doc.setFontSize(9);
+      doc.setTextColor(40, 40, 40);
+      
+      for (let word of across) {
+        const text = `${word.num}. ${word.clue}`;
+        const lines = doc.splitTextToSize(text, 175);
+        
+        // Auto-wrap page break check
+        if (y + (lines.length * 4.5) > 275) {
+          doc.addPage();
+          drawPDFHeader(doc, "CROSSWORDS PUZZLE - CLUES", doc.getNumberOfPages());
+          y = 42;
+          
+          doc.setFont("Helvetica", "bold");
+          doc.setFontSize(11);
+          doc.setTextColor(0, 0, 0);
+          doc.text("ACROSS (CONTINUED)", 15, y);
+          y += 6;
+          
+          doc.setFont("Helvetica", "normal");
+          doc.setFontSize(9);
+          doc.setTextColor(40, 40, 40);
+        }
+        
+        lines.forEach(line => {
+          doc.text(line, 15, y);
+          y += 4.2;
+        });
+        y += 1.2;
+      }
+      
+      y += 5; // space
+      
+      // Print DOWN
+      if (y + 12 > 275) {
+        doc.addPage();
+        drawPDFHeader(doc, "CROSSWORDS PUZZLE - CLUES", doc.getNumberOfPages());
+        y = 42;
+      }
+      
+      doc.setFont("Helvetica", "bold");
+      doc.setFontSize(11);
+      doc.setTextColor(0, 0, 0);
+      doc.text("DOWN", 15, y);
+      y += 6;
+      
+      doc.setFont("Helvetica", "normal");
+      doc.setFontSize(9);
+      doc.setTextColor(40, 40, 40);
+      
+      for (let word of down) {
+        const text = `${word.num}. ${word.clue}`;
+        const lines = doc.splitTextToSize(text, 175);
+        
+        if (y + (lines.length * 4.5) > 275) {
+          doc.addPage();
+          drawPDFHeader(doc, "CROSSWORDS PUZZLE - CLUES", doc.getNumberOfPages());
+          y = 42;
+          
+          doc.setFont("Helvetica", "bold");
+          doc.setFontSize(11);
+          doc.setTextColor(0, 0, 0);
+          doc.text("DOWN (CONTINUED)", 15, y);
+          y += 6;
+          
+          doc.setFont("Helvetica", "normal");
+          doc.setFontSize(9);
+          doc.setTextColor(40, 40, 40);
+        }
+        
+        lines.forEach(line => {
+          doc.text(line, 15, y);
+          y += 4.2;
+        });
+        y += 1.2;
+      }
+    }
+
+    function drawPDFFooter(doc, pageNum, totalPages) {
+      doc.setFont("Helvetica", "normal");
+      doc.setFontSize(8);
+      doc.setTextColor(120, 120, 120);
+      
+      // Center footer text. Unicode character 10084 is a solid heart (❤). Let's use standard text fallback.
+      doc.text("Made with 💗 by AMAR", 105, 287, { align: "center" });
+      
+      // Page counting
+      doc.text(`Page ${pageNum} of ${totalPages}`, 195, 287, { align: "right" });
+    }
+  </script>
+</body>
+</html>

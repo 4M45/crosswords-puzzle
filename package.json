@@ -1,0 +1,9 @@
+{
+  "name": "crossword-generator",
+  "version": "1.0.0",
+  "description": "Bubbly Crossword Puzzle Generator Web App",
+  "main": "index.html",
+  "scripts": {
+    "dev": "node server.js"
+  }
+}
