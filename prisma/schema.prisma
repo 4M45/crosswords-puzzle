@@ -1,0 +1,67 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Theme {
+  id           String             @id @default(uuid())
+  slug         String             @unique // e.g. "halloween-crossword"
+  createdAt    DateTime           @default(now())
+  
+  translations ThemeTranslation[]
+  puzzles      Puzzle[]
+}
+
+model ThemeTranslation {
+  id              String  @id @default(uuid())
+  themeId         String
+  locale          String  // 'en', 'es', 'fr', etc.
+  title           String  // e.g. "Halloween Crossword Puzzle"
+  description     String
+  metaTitle       String
+  metaDescription String
+  
+  theme           Theme   @relation(fields: [themeId], references: [id])
+
+  @@unique([themeId, locale])
+}
+
+model Puzzle {
+  id        String   @id @default(uuid())
+  themeId   String
+  gridWidth Int
+  gridHeight Int
+  layout    Json     // Stores coordinate placements of words
+  
+  theme     Theme    @relation(fields: [themeId], references: [id])
+  localized LocalizedPuzzle[]
+}
+
+model LocalizedPuzzle {
+  id         String   @id @default(uuid())
+  puzzleId   String
+  locale     String
+  pdfUrlFree String?  // Cached URL for free watermarked PDF
+  pdfUrlPro  String?  // Cached URL for pro clean PDF
+  
+  puzzle     Puzzle   @relation(fields: [puzzleId], references: [id])
+  words      ClueWord[]
+
+  @@unique([puzzleId, locale])
+}
+
+model ClueWord {
+  id                String          @id @default(uuid())
+  localizedPuzzleId String
+  word              String
+  clue              String
+  orientation       String          // 'ACROSS' or 'DOWN'
+  startX            Int
+  startY            Int
+
+  localizedPuzzle   LocalizedPuzzle @relation(fields: [localizedPuzzleId], references: [id])
+}
