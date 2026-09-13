@@ -2,8 +2,11 @@ import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
 import { PrismaClient } from '@prisma/client'
 
-// Example Prisma instantiation (in a real app, use a singleton lib/prisma.ts)
-const prisma = new PrismaClient()
+let prismaClient: PrismaClient | null = null
+function getPrisma() {
+  if (!prismaClient) prismaClient = new PrismaClient()
+  return prismaClient
+}
 
 type Props = {
   params: Promise<{ locale: string; slug: string }>
@@ -13,7 +16,7 @@ type Props = {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale, slug } = await params
 
-  const theme = await prisma.theme.findUnique({
+  const theme = await getPrisma().theme.findUnique({
     where: { slug },
     include: {
       translations: {
@@ -46,7 +49,7 @@ export default async function PrintableCrosswordPage({ params }: Props) {
   const { locale, slug } = await params
 
   // Server-Side Data Fetching
-  const theme = await prisma.theme.findUnique({
+  const theme = await getPrisma().theme.findUnique({
     where: { slug },
     include: {
       translations: { where: { locale } },

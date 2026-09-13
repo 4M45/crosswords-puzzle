@@ -3,7 +3,11 @@ import { renderToStream } from '@react-pdf/renderer'
 import { CrosswordDocument } from '@/components/pdf/CrosswordDocument'
 import { PrismaClient } from '@prisma/client'
 
-const prisma = new PrismaClient()
+let prismaClient: PrismaClient | null = null
+function getPrisma() {
+  if (!prismaClient) prismaClient = new PrismaClient()
+  return prismaClient
+}
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url)
@@ -13,7 +17,7 @@ export async function GET(request: Request) {
   if (!id) return new Response('Missing ID', { status: 400 })
 
   // 1. Fetch puzzle data
-  const localizedData = await prisma.localizedPuzzle.findUnique({
+  const localizedData = await getPrisma().localizedPuzzle.findUnique({
     where: { id },
     include: {
       puzzle: {
