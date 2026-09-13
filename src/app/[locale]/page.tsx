@@ -34,7 +34,7 @@ export default function Home() {
 
         <div className="space-y-8">
           {/* Language Selector */}
-          <div className="bg-cream-200 rounded-2xl p-4 flex flex-col md:flex-row items-center gap-4 relative shadow-inner-soft">
+          <div className="bg-cream-200 rounded-2xl p-4 flex flex-col md:flex-row items-center gap-4 relative shadow-inner-soft z-50">
              <div className="flex items-center gap-2 font-bold text-brown-800 absolute top-2 left-4 text-sm">
                 <span className="w-4 h-4 bg-blue-600 inline-block rounded-sm"></span> Choose language
              </div>
