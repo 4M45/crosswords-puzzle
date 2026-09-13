@@ -25,13 +25,16 @@ export default function Home() {
       {/* Main Hero Card */}
       <div className="relative z-10 w-full max-w-2xl bg-cream-50 rounded-[40px] shadow-soft p-10 md:p-14 border-[6px] border-white text-center mb-20">
         
-        <h1 className="text-4xl md:text-5xl font-extrabold text-brown-800 mb-10 leading-tight">
-          Generate Your<br/>Crossword Puzzle
+        <h1 className="text-5xl md:text-6xl font-black text-brown-900 mb-10 leading-tight tracking-tight drop-shadow-sm">
+          Generate Your<br/>
+          <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-600 to-amber-500">
+            Crossword Puzzle
+          </span>
         </h1>
 
-        <div className="space-y-6">
+        <div className="space-y-8">
           {/* Language Selector */}
-          <div className="bg-cream-200 rounded-2xl p-4 flex flex-col md:flex-row items-center gap-4 relative overflow-hidden shadow-inner-soft">
+          <div className="bg-cream-200 rounded-2xl p-4 flex flex-col md:flex-row items-center gap-4 relative shadow-inner-soft">
              <div className="flex items-center gap-2 font-bold text-brown-800 absolute top-2 left-4 text-sm">
                 <span className="w-4 h-4 bg-blue-600 inline-block rounded-sm"></span> Choose language
              </div>
@@ -121,11 +124,11 @@ export default function Home() {
         </div>
 
         {/* Generate Button */}
-        <div className="mt-10 flex justify-center">
-          <button className="bg-primary hover:bg-[#00babb] text-white text-xl font-bold py-4 px-10 rounded-full shadow-lg shadow-primary/30 flex items-center gap-3 transition-transform hover:scale-105 active:scale-95">
-            Generate & Download PDF
-            <span className="bg-white text-red-500 p-1 rounded-md text-xs flex items-center font-black">
-               PDF
+        <div className="mt-12 flex justify-center">
+          <button className="bg-gradient-to-b from-primary to-[#00b0b1] hover:from-[#00e3e4] hover:to-primary text-white text-xl md:text-2xl font-black py-5 px-12 rounded-full shadow-[0_15px_30px_-5px_rgba(0,210,211,0.5)] flex items-center gap-4 transition-all duration-300 hover:scale-[1.03] active:scale-95 border-b-4 border-[#009b9c] active:border-b-0 active:translate-y-1 group">
+            Generate & Download
+            <span className="bg-white text-red-500 px-2 py-1 rounded-lg text-sm flex items-center font-black uppercase tracking-wider group-hover:bg-red-50 transition-colors">
+               <Download className="w-4 h-4 mr-1" /> PDF
             </span>
           </button>
         </div>
