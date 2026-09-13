@@ -6,6 +6,8 @@ import { FileText, Leaf, Book, Atom, Smile, Star, Brain, Download, Globe, Printe
 export default function Home() {
   const [difficulty, setDifficulty] = useState('Medium')
   const [theme, setTheme] = useState('Nature')
+  const [language, setLanguage] = useState('English')
+  const [isLangOpen, setIsLangOpen] = useState(false)
 
   return (
     <div className="min-h-screen relative overflow-hidden flex flex-col items-center pt-16 pb-8">
@@ -33,19 +35,34 @@ export default function Home() {
              <div className="flex items-center gap-2 font-bold text-brown-800 absolute top-2 left-4 text-sm">
                 <span className="w-4 h-4 bg-blue-600 inline-block rounded-sm"></span> Choose language
              </div>
-             <div className="mt-6 w-full flex items-center bg-cream-100 rounded-xl p-2 border-2 border-cream-500/30 justify-between">
+             <div className="mt-6 w-full flex items-center bg-cream-100 rounded-xl p-2 border-2 border-cream-500/30 justify-between relative">
                 <div className="flex gap-2 text-2xl px-2">
                   <span>🇺🇸</span><span>🇪🇸</span><span>🇷🇺</span>
                 </div>
-                <div className="flex items-center gap-3 text-brown-800 font-semibold bg-cream-50 px-4 py-2 rounded-lg cursor-pointer border border-cream-200 shadow-sm flex-1 ml-4 justify-between">
+                <div 
+                  onClick={() => setIsLangOpen(!isLangOpen)}
+                  className="flex items-center gap-3 text-brown-800 font-semibold bg-cream-50 px-4 py-2 rounded-lg cursor-pointer border border-cream-200 shadow-sm flex-1 ml-4 justify-between hover:bg-white transition-colors"
+                >
                   <span className="text-sm opacity-60">Language</span>
                   <div className="flex gap-4 text-sm">
-                    <span>English</span>
-                    <span className="opacity-40">Common</span>
-                    <span className="opacity-40">Spanish</span>
+                    <span>{language}</span>
                   </div>
-                  <ChevronDown className="w-5 h-5 opacity-60" />
+                  <ChevronDown className={`w-5 h-5 opacity-60 transition-transform ${isLangOpen ? 'rotate-180' : ''}`} />
                 </div>
+
+                {isLangOpen && (
+                  <div className="absolute top-full right-0 mt-2 w-48 bg-white border border-cream-200 rounded-xl shadow-xl z-50 overflow-hidden">
+                    {['English', 'Spanish', 'French', 'German', 'Portuguese'].map(lang => (
+                      <div 
+                        key={lang}
+                        onClick={() => { setLanguage(lang); setIsLangOpen(false); }}
+                        className="px-4 py-3 hover:bg-cream-100 cursor-pointer text-sm font-bold text-brown-800 border-b border-cream-50 last:border-0"
+                      >
+                        {lang}
+                      </div>
+                    ))}
+                  </div>
+                )}
              </div>
           </div>
 
