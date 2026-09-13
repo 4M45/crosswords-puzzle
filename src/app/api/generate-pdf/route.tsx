@@ -46,7 +46,7 @@ export async function GET(request: Request) {
   return new NextResponse(stream as any, {
     headers: {
       'Content-Type': 'application/pdf',
-      'Content-Disposition': `attachment; filename="${translation?.slug || 'puzzle'}-${isPro ? 'pro' : 'free'}.pdf"`,
+      'Content-Disposition': `attachment; filename="${localizedData.puzzle.theme.slug || 'puzzle'}-${isPro ? 'pro' : 'free'}.pdf"`,
     }
   })
 }
