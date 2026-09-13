@@ -19,8 +19,8 @@ model Theme {
 model ThemeTranslation {
   id              String  @id @default(uuid())
   themeId         String
-  locale          String  // 'en', 'es', 'fr', etc.
-  title           String  // e.g. "Halloween Crossword Puzzle"
+  locale          String  // 'en', 'es', 'fr', 'de', 'pt'
+  title           String  // Localized H1
   description     String
   metaTitle       String
   metaDescription String
@@ -31,14 +31,14 @@ model ThemeTranslation {
 }
 
 model Puzzle {
-  id        String   @id @default(uuid())
-  themeId   String
-  gridWidth Int
+  id         String   @id @default(uuid())
+  themeId    String
+  gridWidth  Int
   gridHeight Int
-  layout    Json     // Stores coordinate placements of words
+  layout     Json     // Word coordinate mapping
   
-  theme     Theme    @relation(fields: [themeId], references: [id])
-  localized LocalizedPuzzle[]
+  theme      Theme    @relation(fields: [themeId], references: [id])
+  localized  LocalizedPuzzle[]
 }
 
 model LocalizedPuzzle {
