@@ -6,12 +6,12 @@ import { PrismaClient } from '@prisma/client'
 const prisma = new PrismaClient()
 
 type Props = {
-  params: { locale: string; slug: string }
+  params: Promise<{ locale: string; slug: string }>
 }
 
 // 1. Dynamic SEO Metadata Injection (Hreflang & Canonical handling)
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const { locale, slug } = params
+  const { locale, slug } = await params
 
   const theme = await prisma.theme.findUnique({
     where: { slug },
@@ -43,7 +43,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 // 2. Programmatic SEO Landing Page Template
 export default async function PrintableCrosswordPage({ params }: Props) {
-  const { locale, slug } = params
+  const { locale, slug } = await params
 
   // Server-Side Data Fetching
   const theme = await prisma.theme.findUnique({
