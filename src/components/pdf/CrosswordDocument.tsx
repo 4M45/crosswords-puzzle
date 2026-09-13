@@ -91,6 +91,7 @@ export const CrosswordDocument = ({ title, gridWidth, gridHeight, words, isPro, 
                 w.orientation === 'ACROSS' ? x++ : y++
               }
             })
+            return null
           }}
         />
       </View>
@@ -128,6 +129,7 @@ export const CrosswordDocument = ({ title, gridWidth, gridHeight, words, isPro, 
                 w.orientation === 'ACROSS' ? x++ : y++
               }
             })
+            return null
           }}
         />
       </View>
